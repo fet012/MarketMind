@@ -64,9 +64,10 @@ async def lifespan(app: FastAPI):
     # Warm up Ollama so the first real request isn't slow
     try:
         _ollama_client.generate(model=OLLAMA_MODEL, prompt="hi", options={"num_predict": 1})
-        print("[Server] Model warm-up complete ✅")
+        print("[Server] LLM Model warm-up complete ✅")
     except Exception as e:
-        print(f"[Server] ⚠ Model warm-up failed: {e}. Is Ollama running?")
+        print(f"[Server] ⚠ LLM Model warm-up failed: {e}. Is Ollama running?")
+        
     yield
 
 app = FastAPI(
@@ -383,11 +384,9 @@ async def voice(
       1. Receive audio from mobile app
       2. STT → text (faster-whisper)
       3. Route through /chat logic
-      4. TTS → WAV audio (YarnGPT / Piper)
-      5. Return audio bytes
+      4. Return JSON response (Skipping TTS per user request)
     """
     from voice.stt import transcribe
-    from voice.tts import synthesize
 
     audio_bytes = await audio.read()
 
@@ -401,20 +400,14 @@ async def voice(
     chat_req = ChatRequest(message=text, user_id=user_id)
     chat_resp = await chat(chat_req)
 
-    # Step 3: Synthesize reply
-    wav_bytes = synthesize(chat_resp.reply, chat_resp.language)
-
-    return StreamingResponse(
-        iter([wav_bytes]),
-        media_type="audio/wav",
-        headers={
-            "X-Transcript": text,
-            "X-Reply":      chat_resp.reply,
-            "X-Language":   chat_resp.language,
-            "X-Action":     chat_resp.action,
-        },
-    )
-
+    # Step 3: Return JSON directly
+    return {
+        "transcript": text,
+        "reply": chat_resp.reply,
+        "language": chat_resp.language,
+        "action": chat_resp.action,
+        "data": chat_resp.data,
+    }
 
 # ── Entry point ───────────────────────────────────────────────
 

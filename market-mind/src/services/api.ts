@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 
-// The local Wi-Fi IP address provided by the user
+// The local Wi-Fi IP address of the server
 export const BACKEND_URL = 'http://10.208.140.216:8000';
 
 const api = axios.create({
   baseURL: BACKEND_URL,
+  timeout: 120000, // 60 seconds (Local LLM can take time on CPU)
   headers: {
     'Content-Type': 'application/json',
   },
@@ -47,24 +48,31 @@ export const sendChatMessage = async (message: string, userId: string = 'default
 export const sendVoiceMessage = async (audioUri: string, userId: string = 'default') => {
   try {
     const formData = new FormData();
-    
+
     // We need to pass the file to the FormData
     const filename = audioUri.split('/').pop() || 'audio.m4a';
     const match = /\.(\w+)$/.exec(filename);
     const type = match ? `audio/${match[1]}` : 'audio/m4a';
 
-    // React Native FormData format for files
-    formData.append('audio', {
-      uri: Platform.OS === 'ios' ? audioUri.replace('file://', '') : audioUri,
-      name: filename,
-      type,
-    } as any);
+    if (Platform.OS === 'web') {
+      // On Web, audioUri is a blob: URL. We must fetch the blob directly.
+      const res = await fetch(audioUri);
+      const blob = await res.blob();
+      formData.append('audio', blob, filename);
+    } else {
+      // React Native mobile FormData format for files
+      formData.append('audio', {
+        uri: Platform.OS === 'ios' ? audioUri.replace('file://', '') : audioUri,
+        name: filename,
+        type,
+      } as any);
+    }
 
     const response = await axios.post(`${BACKEND_URL}/voice?user_id=${userId}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-      responseType: 'blob', // Because /voice returns a WAV audio file
+      // Backend now returns JSON directly
     });
 
     return response.data;

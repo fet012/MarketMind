@@ -22,7 +22,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-WHISPER_MODEL   = os.getenv("WHISPER_MODEL", "large-v3-turbo")
+WHISPER_MODEL   = os.getenv("WHISPER_MODEL", "base") # Changed to 'base' (approx 140MB) to save download time.
 COMPUTE_TYPE    = os.getenv("WHISPER_COMPUTE_TYPE", "int8")
 DEVICE          = "cpu"  # CPU-only machine
 
@@ -36,29 +36,16 @@ def _get_model():
     if _model is None:
         from faster_whisper import WhisperModel
         print(f"[STT] Loading faster-whisper ({WHISPER_MODEL}, {COMPUTE_TYPE})...")
-        # Force download to a local directory to bypass Windows symlink privilege errors
-        local_cache = os.path.join(os.getcwd(), "models", WHISPER_MODEL.replace("/", "--"))
-        os.makedirs(local_cache, exist_ok=True)
-        
-        from huggingface_hub import snapshot_download
-        from faster_whisper.utils import _MODELS
-        
-        # Resolve the HF repo ID
-        repo_id = _MODELS.get(WHISPER_MODEL, WHISPER_MODEL)
-        
-        # Download directly to folder without using symlinks
-        model_path = snapshot_download(
-            repo_id=repo_id,
-            local_dir=local_cache,
-            local_dir_use_symlinks=False
-        )
+        # Use the existing models directory as the download root
+        download_root = os.path.join(os.getcwd(), "models")
         
         _model = WhisperModel(
-            model_path,
+            WHISPER_MODEL,
             device=DEVICE,
             compute_type=COMPUTE_TYPE,
             cpu_threads=6,          # Match Modelfile num_thread setting
             num_workers=1,          # Single worker on CPU
+            download_root=download_root,
         )
         print("[STT] Model loaded.")
     return _model
