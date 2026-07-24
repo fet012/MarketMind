@@ -1,0 +1,132 @@
+[
+  {
+    "note": "=== NIGERIAN PIDGIN — LOG_SALE ===",
+    "user": "I sell rice two mudu, four thousand naira",
+    "assistant": "{\"reply\": \"Okay! I don record am. You sell rice (2 mudu) for ₦4,000.\", \"action\": \"LOG_SALE\", \"data\": {\"transactions\": [{\"item\": \"rice\", \"amount\": 4000, \"quantity\": \"2 mudu\", \"type\": \"sale\"}]}}"
+  },
+  {
+    "user": "I sell tomato ₦12,500",
+    "assistant": "{\"reply\": \"I don record am. You sell tomato for ₦12,500.\", \"action\": \"LOG_SALE\", \"data\": {\"transactions\": [{\"item\": \"tomato\", \"amount\": 12500, \"quantity\": null, \"type\": \"sale\"}]}}"
+  },
+  {
+    "user": "pepper five thousand",
+    "assistant": "{\"reply\": \"I don record am. You sell pepper for ₦5,000.\", \"action\": \"LOG_SALE\", \"data\": {\"transactions\": [{\"item\": \"pepper\", \"amount\": 5000, \"quantity\": null, \"type\": \"sale\"}]}}"
+  },
+  {
+    "user": "I sell garri three bag, nine thousand",
+    "assistant": "{\"reply\": \"Recorded! Garri (3 bags) for ₦9,000 don enter your record.\", \"action\": \"LOG_SALE\", \"data\": {\"transactions\": [{\"item\": \"garri\", \"amount\": 9000, \"quantity\": \"3 bags\", \"type\": \"sale\"}]}}"
+  },
+  {
+    "note": "=== NIGERIAN PIDGIN — LOG_EXPENSE ===",
+    "user": "I spend 500 for transport today",
+    "assistant": "{\"reply\": \"Okay, I don record am. Transport cost you ₦500 today.\", \"action\": \"LOG_EXPENSE\", \"data\": {\"transactions\": [{\"item\": \"transport\", \"amount\": 500, \"quantity\": null, \"type\": \"expense\"}]}}"
+  },
+  {
+    "user": "I buy tomato for market, forty thousand",
+    "assistant": "{\"reply\": \"I don record am. You spend ₦40,000 to buy tomato.\", \"action\": \"LOG_EXPENSE\", \"data\": {\"transactions\": [{\"item\": \"tomato\", \"amount\": 40000, \"quantity\": null, \"type\": \"expense\"}]}}"
+  },
+  {
+    "user": "loading cost me 1500",
+    "assistant": "{\"reply\": \"Loading expense of ₦1,500 don enter your record.\", \"action\": \"LOG_EXPENSE\", \"data\": {\"transactions\": [{\"item\": \"loading\", \"amount\": 1500, \"quantity\": null, \"type\": \"expense\"}]}}"
+  },
+  {
+    "note": "=== NIGERIAN PIDGIN — QUERY_PROFIT ===",
+    "user": "How much profit I make today?",
+    "assistant": "{\"reply\": \"Today, you sell ₦18,000 and you spend ₦5,500. Your profit wey remain na ₦12,500.\", \"action\": \"QUERY_PROFIT\", \"data\": {\"transactions\": [{\"item\": null, \"amount\": 12500, \"quantity\": null, \"type\": null}]}}"
+  },
+  {
+    "user": "I dey make profit?",
+    "assistant": "{\"reply\": \"Yes! Today you make ₦8,200 profit. You do well!\", \"action\": \"QUERY_PROFIT\", \"data\": {\"transactions\": [{\"item\": null, \"amount\": 8200, \"quantity\": null, \"type\": null}]}}"
+  },
+  {
+    "user": "wetin be my total sales today",
+    "assistant": "{\"reply\": \"Your total sales today na ₦22,000.\", \"action\": \"QUERY_PROFIT\", \"data\": {\"transactions\": [{\"item\": null, \"amount\": 22000, \"quantity\": null, \"type\": null}]}}"
+  },
+  {
+    "note": "=== NIGERIAN PIDGIN — ADVISORY ===",
+    "user": "which item I dey make the most money?",
+    "assistant": "{\"reply\": \"Pepper bring you the most money this week — ₦15,000 out of your total sales. Make sure you always get enough pepper in stock.\", \"action\": \"ADVISORY\", \"data\": {\"transactions\": [{\"item\": \"pepper\", \"amount\": 15000, \"quantity\": null, \"type\": null}]}}"
+  },
+  {
+    "user": "why my profit dey small?",
+    "assistant": "{\"reply\": \"Your transport cost na ₦2,800 today — that na 16% of wetin you spend. If you fit reduce transport, your profit go increase.\", \"action\": \"ADVISORY\", \"data\": {\"transactions\": [{\"item\": \"transport\", \"amount\": 2800, \"quantity\": null, \"type\": null}]}}"
+  },
+  {
+    "note": "=== YORUBA — LOG_SALE ===",
+    "user": "Mo ta ẹyin ₦5000",
+    "assistant": "{\"reply\": \"Ó dára! Mo gbasilẹ rẹ. O ta ẹyin fun ₦5,000.\", \"action\": \"LOG_SALE\", \"data\": {\"transactions\": [{\"item\": \"ẹyin\", \"amount\": 5000, \"quantity\": null, \"type\": \"sale\"}]}}"
+  },
+  {
+    "user": "Mo ta tomati egbàárùn-ún",
+    "assistant": "{\"reply\": \"Ó dára! O ta tomati fun ₦5,000. Mo ti gbasilẹ rẹ.\", \"action\": \"LOG_SALE\", \"data\": {\"transactions\": [{\"item\": \"tomati\", \"amount\": 5000, \"quantity\": null, \"type\": \"sale\"}]}}"
+  },
+  {
+    "note": "=== YORUBA — QUERY_PROFIT ===",
+    "user": "Èrè melo ni mo ní lónìí?",
+    "assistant": "{\"reply\": \"Lónìí, o ta ₦18,000 o sì náwó ₦5,500. Èrè rẹ jẹ ₦12,500.\", \"action\": \"QUERY_PROFIT\", \"data\": {\"transactions\": [{\"item\": null, \"amount\": 12500, \"quantity\": null, \"type\": null}]}}"
+  },
+  {
+    "note": "=== IGBO — LOG_SALE ===",
+    "user": "Agwara m tomato ego ₦8000",
+    "assistant": "{\"reply\": \"Ọ dị mma! Edekọtara m. I rere tomato maka ₦8,000.\", \"action\": \"LOG_SALE\", \"data\": {\"transactions\": [{\"item\": \"tomato\", \"amount\": 8000, \"quantity\": null, \"type\": \"sale\"}]}}"
+  },
+  {
+    "note": "=== IGBO — QUERY_PROFIT ===",
+    "user": "Ego ole m nwetara taa?",
+    "assistant": "{\"reply\": \"Taa, i rere ihe ruru ₦20,000 ma i were ₦6,000. Ọ bụ uru ₦14,000 fọdụrụ.\", \"action\": \"QUERY_PROFIT\", \"data\": {\"transactions\": [{\"item\": null, \"amount\": 14000, \"quantity\": null, \"type\": null}]}}"
+  },
+  {
+    "note": "=== HAUSA — LOG_EXPENSE ===",
+    "user": "Na kashe ₦600 don sufuri",
+    "assistant": "{\"reply\": \"To, na rubuta. Ka kashe ₦600 a sufuri yau.\", \"action\": \"LOG_EXPENSE\", \"data\": {\"transactions\": [{\"item\": \"sufuri\", \"amount\": 600, \"quantity\": null, \"type\": \"expense\"}]}}"
+  },
+  {
+    "note": "=== HAUSA — QUERY_PROFIT ===",
+    "user": "Nawa riba na samu yau?",
+    "assistant": "{\"reply\": \"Yau, ka sayar da ₦15,000 kuma ka kashe ₦4,000. Riban da ya rage shi ne ₦11,000.\", \"action\": \"QUERY_PROFIT\", \"data\": {\"transactions\": [{\"item\": null, \"amount\": 11000, \"quantity\": null, \"type\": null}]}}"
+  },
+  {
+    "note": "=== ENGLISH — LOG_SALE ===",
+    "user": "Sold 3 bags of garri for ₦9000",
+    "assistant": "{\"reply\": \"Recorded! You sold garri (3 bags) for ₦9,000.\", \"action\": \"LOG_SALE\", \"data\": {\"transactions\": [{\"item\": \"garri\", \"amount\": 9000, \"quantity\": \"3 bags\", \"type\": \"sale\"}]}}"
+  },
+  {
+    "user": "Bought tomatoes ₦40,000",
+    "assistant": "{\"reply\": \"Got it! I've recorded your tomato purchase of ₦40,000 as an expense.\", \"action\": \"LOG_EXPENSE\", \"data\": {\"transactions\": [{\"item\": \"tomatoes\", \"amount\": 40000, \"quantity\": null, \"type\": \"expense\"}]}}"
+  },
+  {
+    "note": "=== ENGLISH — QUERY_PROFIT ===",
+    "user": "How much profit did I make today?",
+    "assistant": "{\"reply\": \"Today you sold ₦22,000 and spent ₦7,500. Your profit is ₦14,500.\", \"action\": \"QUERY_PROFIT\", \"data\": {\"transactions\": [{\"item\": null, \"amount\": 14500, \"quantity\": null, \"type\": null}]}}"
+  },
+  {
+    "note": "=== ENGLISH — ADVISORY ===",
+    "user": "Which product brings the most profit?",
+    "assistant": "{\"reply\": \"Eggs brought the highest profit this week at ₦12,000 — that's 45% of your total earnings. Keep your egg stock consistent.\", \"action\": \"ADVISORY\", \"data\": {\"transactions\": [{\"item\": \"eggs\", \"amount\": 12000, \"quantity\": null, \"type\": null}]}}"
+  },
+  {
+    "note": "=== EDGE CASE — missing amount ===",
+    "user": "I sell rice",
+    "assistant": "{\"reply\": \"Okay! How much you sell the rice for? Tell me the amount.\", \"action\": \"NONE\", \"data\": {\"transactions\": [{\"item\": \"rice\", \"amount\": null, \"quantity\": null, \"type\": \"sale\"}]}}"
+  },
+  {
+    "note": "=== EDGE CASE — ambiguous input ===",
+    "user": "five thousand",
+    "assistant": "{\"reply\": \"₦5,000 for wetin? Tell me the item name and if na sale or expense.\", \"action\": \"NONE\", \"data\": {\"transactions\": [{\"item\": null, \"amount\": 5000, \"quantity\": null, \"type\": null}]}}"
+  },
+  {
+    "note": "=== ENGLISH — MULTIPLE ITEMS ===",
+    "user": "i sold 20 bags of rice today for about 20000 and 3 bags of onions for 3000",
+    "assistant": "{\"reply\": \"I've recorded both! You sold 20 bags of rice for ₦20,000 and 3 bags of onions for ₦3,000.\", \"action\": \"LOG_SALE\", \"data\": {\"transactions\": [{\"item\": \"rice\", \"amount\": 20000, \"quantity\": \"20 bags\", \"type\": \"sale\"}, {\"item\": \"onions\", \"amount\": 3000, \"quantity\": \"3 bags\", \"type\": \"sale\"}]}}"
+  },
+  {
+    "note": "=== ENGLISH — MIXED SALES AND EXPENSES ===",
+    "user": "i sold 2 bags of rice and 3 bags of beans for 2500 and 3000 .and also paid the delivery guy 1000",
+    "assistant": "{\"reply\": \"I've recorded everything. You sold rice (₦2,500) and beans (₦3,000), and paid ₦1,000 for delivery.\", \"action\": \"LOG_SALE\", \"data\": {\"transactions\": [{\"item\": \"rice\", \"amount\": 2500, \"quantity\": \"2 bags\", \"type\": \"sale\"}, {\"item\": \"beans\", \"amount\": 3000, \"quantity\": \"3 bags\", \"type\": \"sale\"}, {\"item\": \"delivery guy\", \"amount\": 1000, \"quantity\": null, \"type\": \"expense\"}]}}"
+  },
+  {
+    "note": "=== ENGLISH — GREETING / CHAT ===",
+    "user": "good morning",
+    "assistant": "{\"reply\": \"Good morning! How market today? Wetin you wan record?\", \"action\": \"NONE\", \"data\": {\"transactions\": []}}"
+  }
+]

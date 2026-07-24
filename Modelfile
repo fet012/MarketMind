@@ -1,0 +1,36 @@
+# ============================================================
+# MarketMind — Custom Ollama Modelfile
+# Hardware: Intel Core i5 10th gen, 16 GB RAM, CPU-only
+# Base model: gemma4:e2b (already downloaded)
+# Build: ollama create marketmind -f Modelfile
+# ============================================================
+
+FROM gemma4:e2b
+
+# ── SPEED: Context Window ────────────────────────────────────
+# Default is 128K tokens → pre-allocates a massive KV cache on CPU
+# → ~7GB RAM wasted, slow generation. Cap at 2048 — more than
+# enough for any MarketMind conversation (transactions are short).
+PARAMETER num_ctx 2048
+
+# ── SPEED: CPU Thread Locking ────────────────────────────────
+# 10th gen i5 = 4 physical cores / 8 logical threads.
+# Lock to 6 threads: leaves 2 for OS/background tasks.
+# Prevents thread-thrashing which tanks tokens/second on CPU.
+PARAMETER num_thread 6
+
+# ── ACCURACY: Sampling ───────────────────────────────────────
+# Financial data must not hallucinate numbers.
+# Near-zero temperature = deterministic, factual output.
+PARAMETER temperature 0.1
+PARAMETER top_p 0.9
+PARAMETER top_k 20
+
+# ── SPEED: Output Length ─────────────────────────────────────
+# Trader queries are short. Cap generation at 512 tokens.
+# Prevents the model from rambling on CPU cycles.
+PARAMETER num_predict 512
+
+# ── QUALITY: Repetition ──────────────────────────────────────
+PARAMETER repeat_penalty 1.1
+PARAMETER repeat_last_n 64

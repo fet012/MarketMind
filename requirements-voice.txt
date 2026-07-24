@@ -1,0 +1,17 @@
+# MarketMind — Voice Dependencies
+# Install AFTER requirements-core.txt
+# Install with: pip install -r requirements-voice.txt
+# Then run: scripts\download_models.bat
+
+# STT
+faster-whisper>=1.0.0
+
+# TTS — YarnGPT (Yoruba, Igbo, Pidgin, English)
+torch>=2.2.0
+torchaudio>=2.2.0
+transformers>=4.41.0
+huggingface_hub>=0.23.0
+uroman
+
+# TTS — Piper (Hausa)
+piper-tts>=1.2.0

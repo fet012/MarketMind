@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarketMind AI</title>
+    <!-- Use Google Fonts for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Sleek dark theme with gradients and glassmorphism */
+        :root {
+            --bg-dark: #0f172a;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #10b981; /* Green for profit/sales */
+            --bot-bg: rgba(51, 65, 85, 0.8);
+            --user-bg: rgba(59, 130, 246, 0.9);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            /* Premium dark gradient background */
+            background: radial-gradient(circle at top left, #1e1b4b 0%, #0f172a 50%, #020617 100%);
+        }
+
+        /* Glassmorphism chat container */
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            height: 90vh;
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .header {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--accent);
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        .chat-box::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-box::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        .chat-box::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 14px 18px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: var(--user-bg);
+            color: white;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+        }
+
+        .message.bot {
+            align-self: flex-start;
+            background: var(--bot-bg);
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .meta-data {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .meta-badge {
+            background: rgba(0,0,0,0.25);
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            gap: 12px;
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 14px 18px;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading animation */
+        .typing-indicator {
+            display: none; /* toggled via JS */
+            align-self: flex-start;
+            background: var(--bot-bg);
+            padding: 16px 20px;
+            border-radius: 20px;
+            border-bottom-left-radius: 4px;
+            gap: 6px;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="header">
+            <div class="status-dot"></div>
+            <h1>MarketMind AI</h1>
+        </div>
+
+        <div class="chat-box" id="chat-box">
+            <!-- Intro message -->
+            <div class="message bot">
+                Hello! I am MarketMind, your AI assistant. Tell me about a sale, an expense, or ask me for your profit today.
+            </div>
+            
+            <div class="typing-indicator" id="typing-indicator">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        <form class="input-area" id="chat-form">
+            <input type="text" id="message-input" placeholder="e.g. I sold 5 bags of rice for 50000" autocomplete="off" required>
+            <button type="submit" id="send-button">Send</button>
+        </form>
+    </div>
+
+    <script>
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const chatBox = document.getElementById('chat-box');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const sendButton = document.getElementById('send-button');
+
+        // URL to your local FastAPI server
+        const API_URL = 'http://localhost:8000/chat';
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // 1. Add User Message to UI
+            appendMessage(message, 'user');
+            messageInput.value = '';
+            
+            // 2. Show loading state
+            showTyping(true);
+
+            // 3. Send request to server
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: message,
+                        user_id: 'default',
+                        stream: false
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // 4. Hide loading & show Bot Message
+                showTyping(false);
+                appendBotMessage(data);
+
+            } catch (error) {
+                showTyping(false);
+                appendMessage('Sorry, I could not connect to the server. Is MarketMind running?', 'bot');
+                console.error('Chat Error:', error);
+            }
+        });
+
+        function appendMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            div.textContent = text;
+            
+            // Insert before typing indicator
+            chatBox.insertBefore(div, typingIndicator);
+            scrollToBottom();
+        }
+
+        function appendBotMessage(data) {
+            const div = document.createElement('div');
+            div.className = 'message bot';
+            
+            // Main reply
+            const textDiv = document.createElement('div');
+            textDiv.textContent = data.reply;
+            div.appendChild(textDiv);
+
+            // Metadata badges (Intent Action + Language)
+            if (data.action && data.action !== 'NONE') {
+                const metaDiv = document.createElement('div');
+                metaDiv.className = 'meta-data';
+                
+                const actionBadge = document.createElement('span');
+                actionBadge.className = 'meta-badge';
+                actionBadge.textContent = `⚡ ${data.action}`;
+                metaDiv.appendChild(actionBadge);
+
+                if (data.language) {
+                    const langBadge = document.createElement('span');
+                    langBadge.className = 'meta-badge';
+                    langBadge.textContent = `🗣️ ${data.language}`;
+                    metaDiv.appendChild(langBadge);
+                }
+
+                div.appendChild(metaDiv);
+            }
+
+            chatBox.insertBefore(div, typingIndicator);
+            scrollToBottom();
+        }
+
+        function showTyping(isTyping) {
+            typingIndicator.style.display = isTyping ? 'flex' : 'none';
+            messageInput.disabled = isTyping;
+            sendButton.disabled = isTyping;
+            if (isTyping) {
+                scrollToBottom();
+            } else {
+                messageInput.focus();
+            }
+        }
+
+        function scrollToBottom() {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>

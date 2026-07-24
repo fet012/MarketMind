@@ -1,0 +1,17 @@
+# Environments
+.env
+__pycache__/
+venv/
+env/
+
+# Models
+models/
+
+# Database
+db/*.db
+db/*.sqlite3
+
+# Node
+node_modules/
+market-mind/node_modules/
+market-mind/.expo/
