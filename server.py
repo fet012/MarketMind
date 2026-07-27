@@ -411,7 +411,7 @@ async def voice(
 
     # Step 1: Transcribe
     stt_result = transcribe(audio_bytes)
-    text = stt_result["text"]
+    text = stt_result
     if not text:
         raise HTTPException(status_code=400, detail="Could not transcribe audio.")
 
