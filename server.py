@@ -24,7 +24,7 @@ from fastapi import FastAPI, HTTPException, UploadFile, File, Query
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import ollama
+import google.generativeai as genai
 from dotenv import load_dotenv
 
 # ── Internal modules ──────────────────────────────────────────
@@ -43,9 +43,10 @@ from rag.retriever import retrieve_context, retrieve_item_context
 
 load_dotenv()
 
-OLLAMA_HOST  = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-OLLAMA_MODEL = "marketmind"          # Our custom Modelfile-built model
-PORT         = int(os.getenv("PORT", 8000))
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GEMMA_MODEL = "gemma-4-26b-a4b-it"
+genai.configure(api_key=GOOGLE_API_KEY)
+PORT = int(os.getenv("PORT", 8000))
 
 # Load prompt files
 _PROMPTS_DIR = Path(__file__).parent / "prompts"
@@ -60,13 +61,13 @@ from contextlib import asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
     print(f"[Server] MarketMind API started on port {PORT}")
-    print(f"[Server] Ollama model: {OLLAMA_MODEL} @ {OLLAMA_HOST}")
+    print(f"[Server] Gemma model: {GEMMA_MODEL} via Google AI Studio")
     # Warm up Ollama so the first real request isn't slow
     try:
-        _ollama_client.generate(model=OLLAMA_MODEL, prompt="hi", options={"num_predict": 1})
-        print("[Server] LLM Model warm-up complete ✅")
+        _gemma_client.generate_content("hi")
+        print("[Server] Gemma warm-up complete ✅")
     except Exception as e:
-        print(f"[Server] ⚠ LLM Model warm-up failed: {e}. Is Ollama running?")
+        print(f"[Server] ⚠ Gemma warm-up failed: {e}")
         
     yield
 
@@ -84,7 +85,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-_ollama_client = ollama.Client(host=OLLAMA_HOST)
+_gemma_client = genai.GenerativeModel(GEMMA_MODEL)
 
 
 # ── Request / Response Models ─────────────────────────────────
@@ -137,40 +138,58 @@ def _build_few_shot_messages() -> list[dict]:
 
 
 def _call_gemma(user_message: str, extra_context: str = "") -> dict:
-    """
-    Call the Gemma model with system prompt + few-shots + optional RAG context.
-    Returns the parsed JSON response dict.
-    """
     system = SYSTEM_PROMPT
     if extra_context:
         system = system + "\n\nRELEVANT BUSINESS DATA:\n" + extra_context
 
-    messages = [{"role": "system", "content": system}]
-    messages.extend(_build_few_shot_messages())
-    messages.append({"role": "user", "content": user_message})
+    # Build full prompt for Google AI Studio
+    few_shots = _build_few_shot_messages()
+    few_shot_text = ""
+    for msg in few_shots:
+        role = "User" if msg["role"] == "user" else "Assistant"
+        few_shot_text += f"{role}: {msg['content']}\n"
 
-    response = _ollama_client.chat(
-        model=OLLAMA_MODEL,
-        messages=messages,
-        options={
-            "temperature": 0.1,
-            "num_predict": 512,
-        },
+    full_prompt = f"{system}\n\n{few_shot_text}\nUser: {user_message}\nAssistant:"
+
+    response = _gemma_client.generate_content(
+        full_prompt,
+        generation_config=genai.types.GenerationConfig(
+            temperature=0.1,
+            max_output_tokens=2048,
+        )
     )
 
-    raw = response.message.content.strip()
+    raw = response.text.strip()
 
-    # Highly robust JSON extraction: find the first { and last }
-    start_idx = raw.find('{')
-    end_idx = raw.rfind('}')
-    
-    if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
-        json_str = raw[start_idx:end_idx+1]
+    # Gemma 4's thinking mode often outputs reasoning text before/around
+    # the real JSON answer, and sometimes repeats it. Instead of naively
+    # slicing from the first { to the last } (which grabs across unrelated
+    # braces), we scan for every well-formed {...} block by tracking brace
+    # depth, then try the LAST one first — Gemma tends to put its final
+    # answer at the end.
+    candidates = []
+    depth = 0
+    start = None
+    for i, ch in enumerate(raw):
+        if ch == '{':
+            if depth == 0:
+                start = i
+            depth += 1
+        elif ch == '}':
+            if depth > 0:
+                depth -= 1
+                if depth == 0 and start is not None:
+                    candidates.append(raw[start:i+1])
+                    start = None
+
+    for json_str in reversed(candidates):
         try:
-            return json.loads(json_str)
+            parsed = json.loads(json_str)
+            # Sanity check: we expect at least a "reply" or "data" key
+            if isinstance(parsed, dict) and ("reply" in parsed or "data" in parsed):
+                return parsed
         except json.JSONDecodeError:
-            # Fall through to conversational text if it's broken JSON
-            pass
+            continue
 
     # Middle ground: if the model replies in plain text instead of JSON,
     # or if JSON parsing entirely fails, pass the raw text directly to the user!
@@ -179,7 +198,6 @@ def _call_gemma(user_message: str, extra_context: str = "") -> dict:
         "action": "NONE",
         "data": {"transactions": []},
     }
-
 
 def _format_profit_reply(summary: dict, language: str) -> str:
     """Format a profit summary reply in the trader's language — no LLM needed."""
@@ -224,7 +242,7 @@ def _format_profit_reply(summary: dict, language: str) -> str:
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "model": OLLAMA_MODEL}
+    return {"status": "ok", "model": GEMMA_MODEL}
 
 
 @app.get("/summary")
@@ -279,6 +297,7 @@ async def chat(req: ChatRequest):
     user = get_or_create_user(req.user_id)
     language = detect_language(req.message)
     intent = classify_intent(req.message)
+    print(f"[DEBUG] Classified intent: {intent}")
 
     # ── QUERY_PROFIT: fast path, no LLM ──────────────────────
     if intent == "QUERY_PROFIT":

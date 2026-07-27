@@ -68,15 +68,21 @@ ADVISORY_KEYWORDS = {
     "best", "which item", "most profit", "advice", "suggest",
     "why", "improve", "analyse", "analyze", "compare", "week",
     "monday", "trend", "margin", "reduce", "increase",
+    "should i sell", "should i stock", "how is my", "how's my",
+    "doing well", "worth selling",
     # Pidgin
     "which item", "wetin i do well", "why my profit dey small",
     "which one better", "how to improve", "wetin bring", "abeg advise",
+    "i go sell more", "shey make i sell more", "how my business dey", "shey"
     # Yoruba
     "èyí tó dára jù", "kí ni mo lè ṣe", "ìmọ̀ràn",
+    "ṣé kí n ta síi", "báwo ni òwò mi ṣe rí",
     # Igbo
     "nke kacha", "gwa m ihe", "enyere m aka",
+    "kedu ka azụmahịa m si aga", "m kwesịrị ire ọzọ",
     # Hausa
     "wanne", "mafi kyau", "shawarar", "me zan yi",
+    "yadda kasuwancina yake", "in kara sayarwa",
 }
 
 

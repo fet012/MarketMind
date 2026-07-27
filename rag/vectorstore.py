@@ -11,42 +11,42 @@ Gemma real context instead of making things up.
 
 Embedding model: nomic-embed-text via Ollama (fully local, fast on CPU).
 """
-
 import os
 import json
 from typing import Optional
 import chromadb
 from chromadb.config import Settings
 from dotenv import load_dotenv
+import google.generativeai as genai
 
 load_dotenv()
 
 CHROMA_PATH = os.getenv("CHROMA_PATH", "./rag/chroma_db")
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+genai.configure(api_key=GOOGLE_API_KEY)
 COLLECTION_NAME = "marketmind_summaries"
 
 
 # ── Embedding Function (nomic-embed-text via Ollama) ──────────
 
-class OllamaEmbeddingFunction(chromadb.EmbeddingFunction):
+class GoogleEmbeddingFunction(chromadb.EmbeddingFunction):
     """
-    Custom ChromaDB embedding function that calls Ollama's
-    nomic-embed-text model locally. No internet required.
+    Custom ChromaDB embedding function that calls Google AI Studio's
+    Gemini embedding model. Requires internet + GOOGLE_API_KEY.
     """
 
-    def __init__(self, model: str = "nomic-embed-text"):
+    def __init__(self, model: str = "models/gemini-embedding-001"):
         self.model = model
-        try:
-            import ollama
-            self._client = ollama.Client(host=OLLAMA_HOST)
-        except ImportError:
-            raise RuntimeError("ollama package not installed. Run: pip install ollama")
 
     def __call__(self, input: chromadb.Documents) -> chromadb.Embeddings:
-        # Pass the entire list of strings to Ollama at once (Batching)
-        # instead of looping sequentially. This is exponentially faster.
-        response = self._client.embed(model=self.model, input=input)
-        return response.embeddings
+        # Batch the whole list of strings in one call, same idea as
+        # the old Ollama batching — just a different backend now.
+        response = genai.embed_content(
+            model=self.model,
+            content=list(input),
+            task_type="retrieval_document",
+        )
+        return response["embedding"]
 
 
 # ── ChromaDB Client ───────────────────────────────────────────
@@ -57,7 +57,7 @@ def get_collection() -> chromadb.Collection:
         path=CHROMA_PATH,
         settings=Settings(anonymized_telemetry=False),
     )
-    embedding_fn = OllamaEmbeddingFunction()
+    embedding_fn = GoogleEmbeddingFunction()
     collection = client.get_or_create_collection(
         name=COLLECTION_NAME,
         embedding_function=embedding_fn,

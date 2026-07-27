@@ -16,6 +16,7 @@ Performance on 10th gen i5 (CPU-only):
 """
 
 import os
+os.environ["HF_HUB_DISABLE_XET"] = "1"
 import tempfile
 from pathlib import Path
 from dotenv import load_dotenv
