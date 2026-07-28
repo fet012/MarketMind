@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Platform } from 'react-native';
 
 // The local Wi-Fi IP address of the server
-export const BACKEND_URL = 'http://10.208.140.216:8000';
+export const BACKEND_URL = 'http://192.168.42.104:8000';
 
 const api = axios.create({
   baseURL: BACKEND_URL,

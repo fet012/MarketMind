@@ -297,7 +297,7 @@ async def chat(req: ChatRequest):
     user = get_or_create_user(req.user_id)
     language = detect_language(req.message)
     intent = classify_intent(req.message)
-    print(f"[DEBUG] Classified intent: {intent}")
+    
 
     # ── QUERY_PROFIT: fast path, no LLM ──────────────────────
     if intent == "QUERY_PROFIT":
